@@ -1,86 +1,269 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RTC Visualizer</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
-  </head>
-  <style>
-
-    form > div {
-        margin: .5em;
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        rel="stylesheet">
+</head>
+<style>
+    :root {
+        --bg-gradient: linear-gradient(135deg, #090a0f 0%, #151a22 100%);
+        --bg-color: #090a0f;
+        --panel-bg: rgba(22, 27, 37, 0.7);
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+        --accent-color: #008ff3;
+        /* Màu xanh dương chủ đạo */
+        --accent-glow: rgba(0, 143, 243, 0.4);
+        /* Bóng phát sáng màu xanh */
+        --accent-hover: #00b4d8;
+        /* Màu xanh khi rê chuột qua (hover) */
+        --accent-green: #00f5d4;
+        --accent-red: #ff0055;
+        --accent-blue: #00bbf9;
+        --card-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        --font-main: 'Plus Jakarta Sans', sans-serif;
+        --font-heading: 'Outfit', sans-serif;
     }
-    
-   body,
-   div,
-   button,
-   input {
-       font-family: Roboto, sans-serif;
-   }
 
-   input,
-   button {
-       font-size: 16px;
-       padding: 4px 8px;
-   }
-   input {
-       margin-bottom: 12px;
-   }
-   .no-script {
-       text-align: center;
-   }
+    * {
+        box-sizing: border-box;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
 
-   #raw {
-     margin-top: 60px;
-   }
-   /* START CSS used for raw plotting */
-   details[open] pre {
-       padding-left: 10px;
-       padding-bottom: 10px;
-   }
-   table details[open] summary {
-       color: blue;
-   }
-   table details.host summary:after {
-       content: ' (host)';
-   }
-   table details.relay summary:after {
-       content: ' (relay)';
-   }
-   table details.srflx summary:after {
-       content: ' (srflx)'
-   }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
 
-   #tables>details:nth-of-type(even) {
-       background-color: #f0f0f0;
-   }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-   .graph {
-       margin-left: 10px;
-       margin-right: 10px;
-   }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+    }
 
-   .candidatepairtable {
-       text-align: center;
-   }
-   .candidatepairtable td {
-       background-color: #ddd;
-       padding: 5px;
-   }
-   ice.style['background-color'] = '#ddd';
-   ice.style['text-align'] = 'center';
-   /* END CSS used for raw plotting */
-  </style>
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
 
-  <body>
+    body {
+        background: var(--bg-gradient);
+        color: var(--text-primary);
+        font-family: var(--font-main);
+        margin: 0;
+        min-height: 100vh;
+        padding: 30px;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font-family: var(--font-main);
+    }
+
+    .no-script {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2rem;
+        color: var(--accent-red);
+    }
+
+    /* react-tabs overrides */
+    .react-tabs {
+        background: var(--panel-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--panel-border);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--card-shadow);
+        margin-top: 20px;
+    }
+
+    .react-tabs__tab-list {
+        border-bottom: 1px solid var(--panel-border) !important;
+        display: flex;
+        gap: 12px;
+        padding-left: 0 !important;
+        margin-bottom: 30px !important;
+    }
+
+    .react-tabs__tab {
+        color: var(--text-secondary);
+        border: none !important;
+        background: transparent !important;
+        bottom: 0 !important;
+        padding: 14px 28px !important;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 1.15rem;
+        border-radius: 10px 10px 0 0 !important;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .react-tabs__tab:hover {
+        color: var(--text-primary);
+    }
+
+    .react-tabs__tab--selected {
+        color: var(--accent-green) !important;
+    }
+
+    .react-tabs__tab--selected::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--accent-green);
+        box-shadow: 0 0 12px var(--accent-green);
+        border-radius: 3px 3px 0 0;
+    }
+
+    .react-tabs__tab:focus::after {
+        display: none;
+    }
+
+    /* START CSS used for raw plotting */
+    #raw {
+        margin-top: 10px;
+    }
+
+    details {
+        background: rgba(255, 255, 255, 0.015);
+        border: 1px solid var(--panel-border);
+        border-radius: 14px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    details[open] {
+        background: rgba(255, 255, 255, 0.035);
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    summary {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        padding: 18px 24px;
+        cursor: pointer;
+        user-select: none;
+        outline: none;
+        transition: background 0.2s;
+    }
+
+    summary:hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    details[open] summary {
+        border-bottom: 1px solid var(--panel-border);
+        color: var(--accent-green);
+    }
+
+    pre {
+        background: rgba(0, 0, 0, 0.45);
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px;
+        overflow-x: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: #b5e2fa;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th,
+    td {
+        padding: 14px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--panel-border);
+    }
+
+    th {
+        background-color: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover td {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    #tables>details:nth-of-type(even) {
+        background-color: rgba(255, 255, 255, 0.005);
+    }
+
+    .graph {
+        margin: 24px 0;
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--panel-border);
+    }
+
+    .candidatepairtable {
+        margin: 20px;
+        width: calc(100% - 40px);
+    }
+
+    .candidatepairtable td {
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--panel-border);
+    }
+
+    .candidatepairtable tr:hover td {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* END CSS used for raw plotting */
+</style>
+
+<body>
     <noscript>
-      <div class='no-script'>
-        JavaScript is disabled. </br>For this to work you have to enable JavaScript.
-      </div>
+        <div class='no-script'>
+            JavaScript is disabled. </br>For this to work you have to enable JavaScript.
+        </div>
     </noscript>
 
     <div id="main"></div>
-  </body>
+</body>
+
 </html>

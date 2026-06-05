@@ -177,32 +177,56 @@ function createContainers (connid, url) {
   let innerText = '';
   let summary = document.createElement('summary')
   if (connid !== 'null') {
-    innerText = 'Connection:' + connid// + ' URL: ' + url
+    innerText = 'Connection: ' + connid
   } else {
     innerText = 'Meeting events';
   }
 
   summary.innerText = innerText;
-
   container.appendChild(summary)
 
   if (connid !== 'null') {
-    // show state transitions, like in https://webrtc.github.io/samples/src/content/peerconnection/states
-    signalingState = document.createElement('div')
+    const statesContainer = document.createElement('div')
+    statesContainer.style.display = 'flex'
+    statesContainer.style.flexWrap = 'wrap'
+    statesContainer.style.gap = '12px'
+    statesContainer.style.padding = '16px 20px'
+    statesContainer.style.background = 'rgba(255, 255, 255, 0.02)'
+    statesContainer.style.borderBottom = '1px solid var(--panel-border)'
+    container.appendChild(statesContainer)
 
+    signalingState = document.createElement('div')
     signalingState.id = 'signalingstate_' + connid
     signalingState.textContent = 'Signaling state:'
-    container.appendChild(signalingState)
+    signalingState.style.fontSize = '0.85rem'
+    signalingState.style.padding = '6px 12px'
+    signalingState.style.background = 'rgba(0, 187, 249, 0.1)'
+    signalingState.style.color = 'var(--accent-blue)'
+    signalingState.style.borderRadius = '6px'
+    signalingState.style.border = '1px solid rgba(0, 187, 249, 0.2)'
+    statesContainer.appendChild(signalingState)
 
     iceConnectionState = document.createElement('div')
     iceConnectionState.id = 'iceconnectionstate_' + connid
     iceConnectionState.textContent = 'ICE connection state:'
-    container.appendChild(iceConnectionState)
+    iceConnectionState.style.fontSize = '0.85rem'
+    iceConnectionState.style.padding = '6px 12px'
+    iceConnectionState.style.background = 'rgba(124, 58, 237, 0.1)'
+    iceConnectionState.style.color = 'var(--accent-hover)'
+    iceConnectionState.style.borderRadius = '6px'
+    iceConnectionState.style.border = '1px solid rgba(124, 58, 237, 0.2)'
+    statesContainer.appendChild(iceConnectionState)
 
     connectionState = document.createElement('div')
     connectionState.id = 'connectionstate_' + connid
     connectionState.textContent = 'Connection state:'
-    container.appendChild(connectionState)
+    connectionState.style.fontSize = '0.85rem'
+    connectionState.style.padding = '6px 12px'
+    connectionState.style.background = 'rgba(0, 245, 212, 0.1)'
+    connectionState.style.color = 'var(--accent-green)'
+    connectionState.style.borderRadius = '6px'
+    connectionState.style.border = '1px solid rgba(0, 245, 212, 0.2)'
+    statesContainer.appendChild(connectionState)
 
     candidates = document.createElement('table')
     candidates.className = 'candidatepairtable'
@@ -503,24 +527,102 @@ function processConnections (connectionIds, data) {
         }
       }) 
 
+    const layout = {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0.15)',
+      font: {
+        family: 'Plus Jakarta Sans, sans-serif',
+        color: '#9ca3af',
+        size: 11
+      },
+      title: {
+        text: title,
+        font: {
+          family: 'Outfit, sans-serif',
+          color: '#f3f4f6',
+          size: 14,
+          weight: 600
+        }
+      },
+      margin: { t: 50, b: 40, l: 60, r: 20 },
+      xaxis: {
+        gridcolor: 'rgba(255, 255, 255, 0.06)',
+        linecolor: 'rgba(255, 255, 255, 0.1)',
+        zerolinecolor: 'rgba(255, 255, 255, 0.1)',
+        tickcolor: 'rgba(255, 255, 255, 0.2)'
+      },
+      yaxis: {
+        gridcolor: 'rgba(255, 255, 255, 0.06)',
+        linecolor: 'rgba(255, 255, 255, 0.1)',
+        zerolinecolor: 'rgba(255, 255, 255, 0.1)',
+        tickcolor: 'rgba(255, 255, 255, 0.2)'
+      },
+      hovermode: 'closest',
+      showlegend: true,
+      legend: {
+        bgcolor: 'rgba(0,0,0,0.2)',
+        bordercolor: 'rgba(255,255,255,0.08)',
+        borderwidth: 1,
+        orientation: 'h',
+        x: 0,
+        y: -0.25
+      }
+    }
+
+    const config = {
+      responsive: true,
+      displayModeBar: true,
+      displaylogo: false
+    }
+
     // expand the graph when opening
-    container.ontoggle = () => container.open && Plotly.react(chartContainer, traces)
+    container.ontoggle = () => container.open && Plotly.react(chartContainer, traces, layout, config)
   }
 
+  // Style the graph selector container
+  graphSelectorContainer.style.display = 'flex'
+  graphSelectorContainer.style.flexWrap = 'wrap'
+  graphSelectorContainer.style.gap = '16px'
+  graphSelectorContainer.style.marginBottom = '24px'
+  graphSelectorContainer.style.padding = '16px 20px'
+  graphSelectorContainer.style.background = 'rgba(255, 255, 255, 0.02)'
+  graphSelectorContainer.style.border = '1px solid var(--panel-border)'
+  graphSelectorContainer.style.borderRadius = '12px'
+
   Object.keys(graphTypes).forEach(function (type) {
+    const wrapper = document.createElement('label')
+    wrapper.style.display = 'flex'
+    wrapper.style.alignItems = 'center'
+    wrapper.style.gap = '8px'
+    wrapper.style.cursor = 'pointer'
+    wrapper.style.fontSize = '0.9rem'
+    wrapper.style.userSelect = 'none'
+
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox'
     checkbox.checked = false
-    graphSelectorContainer.appendChild(checkbox)
+    checkbox.style.cursor = 'pointer'
+    checkbox.style.width = '16px'
+    checkbox.style.height = '16px'
+    checkbox.style.accentColor = 'var(--accent-color)'
+    wrapper.appendChild(checkbox)
 
-    const label = document.createElement('label')
-    label.innerText = 'Toggle graphs for type=' + type
-    graphSelectorContainer.appendChild(label)
+    const text = document.createElement('span')
+    text.innerText = 'Toggle graphs for type=' + type
+    wrapper.appendChild(text)
+
+    graphSelectorContainer.appendChild(wrapper)
 
     const selector = '.webrtc-' + type
     checkbox.onchange = function () {
       containers[connid].graphs.querySelectorAll(selector).forEach(function (el) {
         el.open = checkbox.checked
+        if (el.open) {
+          const chart = el.querySelector('[id^="chart_"]')
+          if (chart) {
+            Plotly.Plots.resize(chart)
+          }
+        }
       })
     }
   })
