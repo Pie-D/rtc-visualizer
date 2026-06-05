@@ -48,10 +48,12 @@ export class MongoDBAdapter extends DatabaseAdapter {
       startDate: { $gte: minDate, $lte: maxDate }
     }
 
-    if (conferenceId.includes('/')) {
-      query.conferenceUrl = conferenceId
-    } else {
-      query.conferenceId = conferenceId
+    if (conferenceId && conferenceId !== '*') {
+      if (conferenceId.includes('/')) {
+        query.conferenceUrl = conferenceId
+      } else {
+        query.conferenceId = conferenceId
+      }
     }
 
     return query

@@ -58,8 +58,8 @@ export function createSearchRoutes (metadataManager) {
 
     logger.info('Searching for:', params)
 
-    if (!query.conferenceId && !query.sessionId) {
-      return res.status(400).json(paramError('Param "conference" or "session" is required'))
+    if (!params.conferenceId && !params.sessionId && !params.minDate && !params.maxDate) {
+      return res.status(400).json(paramError('At least one search parameter (conference, session, or date range) is required'))
     }
 
     try {

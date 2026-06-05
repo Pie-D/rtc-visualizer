@@ -81,6 +81,10 @@ export class DynamoDBAdapter extends DatabaseAdapter {
     return this._sessions.query('sessionId').eq(sessionId).using('sessionId-startDate-index')
   }
 
+  _makeScanQuery (minDate = 0, maxDate = new Date().getTime()) {
+    return this._conferencesById.scan().filter('startDate').between(minDate, maxDate)
+  }
+
   _makeConferenceQuery (conferenceId, minDate = 0, maxDate = new Date().getTime()) {
     // Conference names can't contain slashes, so if the conferenceId contains a slash character we assume it's a url
     // and search using the conferenceByUrl index.
@@ -104,9 +108,14 @@ export class DynamoDBAdapter extends DatabaseAdapter {
   }
 
   async doQuery ({ sessionId, meetingUniqueId, conferenceId, minDate, maxDate }) {
-    const query = (sessionId || meetingUniqueId)
-      ? this._makeSessionQuery(sessionId || meetingUniqueId)
-      : this._makeConferenceQuery(conferenceId, minDate, maxDate)
+    let query
+    if (sessionId || meetingUniqueId) {
+      query = this._makeSessionQuery(sessionId || meetingUniqueId)
+    } else if (!conferenceId || conferenceId === '*') {
+      query = this._makeScanQuery(minDate, maxDate)
+    } else {
+      query = this._makeConferenceQuery(conferenceId, minDate, maxDate)
+    }
 
     let results = await query.exec()
 
