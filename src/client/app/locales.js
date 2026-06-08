@@ -86,6 +86,7 @@ const locales = {
     errorStatus: 'Lỗi trạng thái:',
     prevPage: 'Trước',
     nextPage: 'Sau',
+    pageOf: 'Trang {page} trên {pages}',
     logout: 'Đăng xuất'
   }
 }
