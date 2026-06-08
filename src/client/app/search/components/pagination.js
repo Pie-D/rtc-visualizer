@@ -18,7 +18,7 @@ const NavButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-bg);
   border: 1px solid var(--panel-border);
   color: var(--text-primary);
   font-family: var(--font-heading);
@@ -31,7 +31,7 @@ const NavButton = styled.button`
   outline: none;
 
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--input-bg-focus);
     border-color: var(--accent-color);
     box-shadow: 0 0 10px var(--accent-glow);
     transform: translateY(-1px);
@@ -77,8 +77,8 @@ export default () => {
         disabled={page <= 1}
         onClick={() => handlePageChange(page - 1)}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
+        <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+          <polyline points='15 18 9 12 15 6' />
         </svg>
         {t('prevPage')}
       </NavButton>
@@ -90,8 +90,8 @@ export default () => {
         onClick={() => handlePageChange(page + 1)}
       >
         {t('nextPage')}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
+        <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+          <polyline points='9 18 15 12 9 6' />
         </svg>
       </NavButton>
     </PaginationContainer>

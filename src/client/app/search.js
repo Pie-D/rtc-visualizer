@@ -4,7 +4,7 @@ import { FilesList } from './files/components'
 import { SearchForm, Pagination } from './search/components'
 import { useTranslation } from './locales'
 import LanguageSwitcher from './config/LanguageSwitcher'
-
+import ThemeToggle from './config/ThemeToggle'
 
 const DashboardContainer = styled.div`
   max-width: 1200px;
@@ -45,22 +45,28 @@ const Logo = styled.div`
 `
 
 const LogoIcon = () => (
-  <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-    width="72.000000pt" height="72.000000pt" viewBox="0 0 72.000000 72.000000"
-    preserveAspectRatio="xMidYMid meet">
+  <svg
+    version='1.0' xmlns='http://www.w3.org/2000/svg'
+    width='72.000000pt' height='72.000000pt' viewBox='0 0 72.000000 72.000000'
+    preserveAspectRatio='xMidYMid meet'
+  >
 
-    <g transform="translate(0.000000,72.000000) scale(0.100000,-0.100000)"
-      fill="#008ff3" stroke="none">
-      <path d="M101 554 c-19 -25 -21 -40 -21 -195 0 -92 3 -175 6 -184 14 -37 57
+    <g
+      transform='translate(0.000000,72.000000) scale(0.100000,-0.100000)'
+      fill='#008ff3' stroke='none'
+    >
+      <path d='M101 554 c-19 -25 -21 -40 -21 -195 0 -92 3 -175 6 -184 14 -37 57
 -45 229 -45 163 0 166 0 190 25 15 14 25 36 25 53 0 25 -9 34 -84 76 -47 26
 -87 52 -89 59 -3 8 -9 6 -19 -7 -28 -35 -86 3 -62 42 15 24 38 26 59 6 10 -11
 19 -13 23 -7 4 5 44 31 90 57 73 43 82 51 82 77 0 16 -9 38 -20 49 -19 19 -33
 20 -204 20 l-185 0 -20 -26z m250 -54 c20 -6 43 -18 52 -28 15 -17 15 -19 -12
 -35 -23 -14 -33 -14 -60 -4 -26 10 -37 9 -59 -3 -82 -47 -29 -176 59 -143 26
 10 37 9 62 -4 l31 -16 -23 -18 c-13 -10 -40 -24 -62 -30 -32 -10 -46 -9 -84 5
--58 23 -88 64 -92 130 -5 65 21 110 80 136 49 23 59 23 108 10z"/>
-      <path d="M573 499 l-33 -21 0 -121 0 -122 31 -17 c38 -22 65 -23 73 -2 3 9 6
-75 6 148 0 163 -9 179 -77 135z"/>
+-58 23 -88 64 -92 130 -5 65 21 110 80 136 49 23 59 23 108 10z'
+      />
+      <path d='M573 499 l-33 -21 0 -121 0 -122 31 -17 c38 -22 65 -23 73 -2 3 9 6
+75 6 148 0 163 -9 179 -77 135z'
+      />
     </g>
   </svg>
 )
@@ -75,7 +81,7 @@ const Title = styled.h1`
   font-size: 2rem;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(90deg, #ffffff 0%, #a5b4fc 100%);
+  background: var(--title-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `
@@ -114,7 +120,18 @@ export default () => {
             <Subtitle>{t('dashboardSubtitle')}</Subtitle>
           </HeaderText>
         </HeaderLeft>
-        <LanguageSwitcher />
+        <HeaderRight>
+          <ThemeToggle />
+          <LanguageSwitcher />
+          <LogoutButton href='/logout'>
+            <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+              <path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4' />
+              <polyline points='16 17 21 12 16 7' />
+              <line x1='21' y1='12' x2='9' y2='12' />
+            </svg>
+            {t('logout')}
+          </LogoutButton>
+        </HeaderRight>
       </Header>
       <Card>
         <SearchForm />
@@ -125,4 +142,37 @@ export default () => {
   )
 }
 
+const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
 
+  @media (max-width: 576px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+`
+
+const LogoutButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+    transform: translateY(-1px);
+    color: #ffffff;
+  }
+`

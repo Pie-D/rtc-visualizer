@@ -5,10 +5,10 @@ function addPEMHeaders (headerlessPEMKey) {
   return `-----BEGIN CERTIFICATE-----\n${headerlessPEMKey}\n-----END CERTIFICATE-----`
 }
 
-function addRSAPublicKeyPEMHeaders(headerlessPEMKey) {
-  const nlHeaderlessPEMKey = headerlessPEMKey.replace(/(.{64})/g, '$1\n');
+function addRSAPublicKeyPEMHeaders (headerlessPEMKey) {
+  const nlHeaderlessPEMKey = headerlessPEMKey.replace(/(.{64})/g, '$1\n')
 
-  return `-----BEGIN PUBLIC KEY-----\n${nlHeaderlessPEMKey}\n-----END PUBLIC KEY-----`;
+  return `-----BEGIN PUBLIC KEY-----\n${nlHeaderlessPEMKey}\n-----END PUBLIC KEY-----`
 }
 
 const { RTCSTATS_JWT_PUBLIC_KEY } = process.env
@@ -17,24 +17,23 @@ const { RTCSTATS_JWT_EGHT_PUBLIC_KEY } = process.env
 const formattedKeyJaaS = addPEMHeaders(RTCSTATS_JWT_PUBLIC_KEY)
 const formattedKeyEGHT = addRSAPublicKeyPEMHeaders(RTCSTATS_JWT_EGHT_PUBLIC_KEY)
 
-
-function isValidJaaSToken(authorization) {
+function isValidJaaSToken (authorization) {
   try {
     const bearerToken = authorization.substring(7)
     const decodedToken = jwt.verify(bearerToken, formattedKeyJaaS)
 
-    return decodedToken;    
+    return decodedToken
   } catch (error) {
     log.error(`JAAS Bearer authorization failed: ${JSON.stringify(error)}`)
   }
 }
 
-function isValidEGHTToken(authorization) {
+function isValidEGHTToken (authorization) {
   try {
     const bearerToken = authorization.substring(7)
     const decodedToken = jwt.verify(bearerToken, formattedKeyEGHT)
 
-    return decodedToken;    
+    return decodedToken
   } catch (error) {
     log.error(`EGHT Bearer authorization failed: ${JSON.stringify(error)}`)
   }
@@ -44,8 +43,8 @@ export default (req, res, next) => {
   const { headers: { authorization = '' } = {} } = req
 
   if (authorization.startsWith('Bearer ')) {
-    const decodedToken = isValidJaaSToken(authorization) || isValidEGHTToken(authorization);
-    
+    const decodedToken = isValidJaaSToken(authorization) || isValidEGHTToken(authorization)
+
     if (decodedToken) {
       req.user = decodedToken
       return next()

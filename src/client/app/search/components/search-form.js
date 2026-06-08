@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { getSearchInProgress, getSearchError } from '../selectors'
+import { getSearchError } from '../selectors'
 import Error from '../../errors/components'
 import { search } from '../actions'
 import SearchDetails from './search-details'
@@ -52,7 +52,7 @@ const SearchLabel = styled.label`
 `
 
 const SearchInput = styled.input`
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-bg);
   border: 1px solid var(--panel-border);
   color: var(--text-primary);
   padding: 12px 16px;
@@ -63,13 +63,13 @@ const SearchInput = styled.input`
   width: 100%;
 
   &:focus {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--input-bg-focus);
     border-color: var(--accent-color);
     box-shadow: 0 0 12px var(--accent-glow);
   }
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.25);
+    color: var(--input-placeholder);
   }
 `
 
@@ -81,7 +81,7 @@ const DatePickerContainer = styled.div`
   }
 
   .react-datepicker__input-container input {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--input-bg);
     border: 1px solid var(--panel-border);
     color: var(--text-primary);
     padding: 12px 16px;
@@ -92,7 +92,7 @@ const DatePickerContainer = styled.div`
     width: 100%;
 
     &:focus {
-      background: rgba(255, 255, 255, 0.08);
+      background: var(--input-bg-focus);
       border-color: var(--accent-color);
       box-shadow: 0 0 12px var(--accent-glow);
     }
@@ -144,7 +144,6 @@ function getMinDatePlaceholder () {
 export default () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const searchInProgress = useSelector(getSearchInProgress)
   const error = useSelector(getSearchError)
 
   useEffect(() => {
@@ -210,4 +209,3 @@ export default () => {
     </div>
   )
 }
-

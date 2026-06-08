@@ -18,4 +18,3 @@ import('./logger.mjs').then(({ default: log }) => {
     log.info('Config file loaded')
   }
 })
-

@@ -9,7 +9,7 @@ import { useTranslation } from '../../locales'
 
 const Content = styled.div`
   padding: 24px;
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--details-content-bg);
   border-top: 1px solid var(--panel-border);
 `
 
@@ -26,7 +26,7 @@ const Table = styled.table`
   }
 
   th {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: var(--th-bg);
     color: var(--text-primary);
     font-family: var(--font-heading);
     font-weight: 600;
@@ -52,8 +52,8 @@ const Details = styled.details`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &[open] {
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border-color: var(--details-open-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
 `
 
@@ -70,7 +70,7 @@ const SummaryContainer = styled.summary`
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--summary-hover);
   }
 
   &::after {
@@ -166,11 +166,11 @@ export default ({ id, data }) => {
             ? <NonGroup><Emph>{t('other')} </Emph>{`${group.length} ${t('participantsCount')}`}</NonGroup>
             : (
               <>
-                <MetaItem><Emph>{t('permalink')}</Emph> <PermalinkLink href={permalink} target="_blank">{permalink}</PermalinkLink></MetaItem>
+                <MetaItem><Emph>{t('permalink')}</Emph> <PermalinkLink href={permalink} target='_blank'>{permalink}</PermalinkLink></MetaItem>
                 {conferenceId && <MetaItem><Emph>{t('conferenceId')}</Emph> {conferenceId}</MetaItem>}
                 <MetaItem>
                   <Emph>{t('startTime')}</Emph> {formatDate(startDate)}
-                  <span style={{ margin: '0 8px', color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+                  <span style={{ margin: '0 8px', color: 'var(--dot-color)' }}>•</span>
                   <Emph>{t('endTime')}</Emph> {formatDate(endDate)}
                 </MetaItem>
                 <MetaItem><Emph>{t('participants')}</Emph> {participants}</MetaItem>
@@ -196,4 +196,3 @@ export default ({ id, data }) => {
     </Details>
   )
 }
-

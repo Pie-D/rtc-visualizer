@@ -174,15 +174,15 @@ function createContainers (connid, url) {
   const container = document.createElement('details')
   container.open = false
   container.style.margin = '10px'
-  let innerText = '';
+  let innerText = ''
   let summary = document.createElement('summary')
   if (connid !== 'null') {
     innerText = 'Connection: ' + connid
   } else {
-    innerText = 'Meeting events';
+    innerText = 'Meeting events'
   }
 
-  summary.innerText = innerText;
+  summary.innerText = innerText
   container.appendChild(summary)
 
   if (connid !== 'null') {
@@ -259,29 +259,28 @@ function createContainers (connid, url) {
   return container
 }
 
-function convertTotalToRateSeries(timeSeries) {
+function convertTotalToRateSeries (timeSeries) {
   return timeSeries.reduce(
     (accumulator, currentValue) => {
-
-      const {prevValue} = accumulator;
-      accumulator.prevValue = currentValue;
+      const { prevValue } = accumulator
+      accumulator.prevValue = currentValue
 
       if (!prevValue.length) {
-          return accumulator;
-      } 
-    
-      const [timestamp = 0, totalBytesSent = 0] = currentValue;
-      const [prevTimestamp = 0, prevTotalBytesSent = 0] = prevValue;
+        return accumulator
+      }
 
-      const sampleRateSeconds = (timestamp - prevTimestamp) / 1000;
-      const bitRate = (totalBytesSent - prevTotalBytesSent) * 8;
-      const bitRatePerSecond = Math.round(bitRate / sampleRateSeconds);
+      const [timestamp = 0, totalBytesSent = 0] = currentValue
+      const [prevTimestamp = 0, prevTotalBytesSent = 0] = prevValue
 
-      accumulator.bitRate.push([timestamp, bitRatePerSecond]);
-      return accumulator;
+      const sampleRateSeconds = (timestamp - prevTimestamp) / 1000
+      const bitRate = (totalBytesSent - prevTotalBytesSent) * 8
+      const bitRatePerSecond = Math.round(bitRate / sampleRateSeconds)
+
+      accumulator.bitRate.push([timestamp, bitRatePerSecond])
+      return accumulator
     },
-    { bitRate: [], prevValue: []},
-  ).bitRate;
+    { bitRate: [], prevValue: [] }
+  ).bitRate
 }
 
 function processGUM (data) {
@@ -501,15 +500,15 @@ function processConnections (connectionIds, data) {
       'targetBitrate', 'packetsLost', 'jitter',
       'availableOutgoingBitrate', 'roundTripTime'
     ]
-    const rateSeriesWhitelist = ['bytesSent', 'bytesReceived'];
-    
+    const rateSeriesWhitelist = ['bytesSent', 'bytesReceived']
+
     // Calculate bitrate per second for time series that contain cumulated values
     // over time, time total bytes sent or total bytes received
     Object.keys(series[reportname])
       .filter(name => rateSeriesWhitelist.includes(name))
       .map(name => {
-        const rateSeries = convertTotalToRateSeries(series[reportname][name]);
-        series[reportname][`${name}InBits/S`] = rateSeries;
+        const rateSeries = convertTotalToRateSeries(series[reportname][name])
+        series[reportname][`${name}InBits/S`] = rateSeries
       })
 
     const traces = Object.keys(series[reportname])
@@ -521,11 +520,11 @@ function processConnections (connectionIds, data) {
         return {
           mode: 'lines+markers',
           name: name,
-          visible: visibleSeries.includes(name) ? true: 'legendonly',
+          visible: visibleSeries.includes(name) ? true : 'legendonly',
           x: data.map(d => new Date(d[0])),
           y: data.map(d => d[1])
         }
-      }) 
+      })
 
     const layout = {
       paper_bgcolor: 'rgba(0,0,0,0)',

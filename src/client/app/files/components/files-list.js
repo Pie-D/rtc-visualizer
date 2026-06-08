@@ -22,4 +22,3 @@ export default () => {
 
   return searchFinished ? <div>{t('nothingFound')} <br />{t('tryNewSearch')} </div> : null
 }
-

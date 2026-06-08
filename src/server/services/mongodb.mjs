@@ -87,6 +87,4 @@ export class MongoDBAdapter extends DatabaseAdapter {
       return results
     }
   }
-
-
 }

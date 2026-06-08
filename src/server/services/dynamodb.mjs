@@ -127,7 +127,7 @@ export class DynamoDBAdapter extends DatabaseAdapter {
     if (page !== undefined && limit !== undefined) {
       // Sort results by startDate descending (newest first)
       results.sort((a, b) => b.startDate - a.startDate)
-      
+
       const start = (page - 1) * limit
       const paginatedResults = results.slice(start, start + limit)
       return { results: paginatedResults, total }

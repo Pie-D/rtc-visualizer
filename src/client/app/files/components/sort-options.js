@@ -10,7 +10,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--summary-hover);
   border: 1px solid var(--panel-border);
   border-radius: 12px;
   padding: 16px;
@@ -27,7 +27,7 @@ const Label = styled.div`
 `
 
 const Options = styled.select`
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-bg);
   color: var(--text-primary);
   border: 1px solid var(--panel-border);
   border-radius: 8px;
@@ -43,7 +43,7 @@ const Options = styled.select`
   }
 
   option {
-    background-color: #151a22;
+    background-color: var(--select-option-bg);
     color: var(--text-primary);
   }
 `
@@ -70,5 +70,3 @@ export default ({ id }) => {
     </Container>
   )
 }
-
-

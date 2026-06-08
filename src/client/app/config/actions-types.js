@@ -4,4 +4,3 @@ export default generateActions([
   'SetConfig',
   'SetLanguage'
 ])
-

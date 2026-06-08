@@ -9,6 +9,7 @@ import { Console } from 'console-feed'
 import { fetchFileBasicAuth, fetchFileJWTAuth } from './files/actions'
 import { useTranslation } from './locales'
 import LanguageSwitcher from './config/LanguageSwitcher'
+import ThemeToggle from './config/ThemeToggle'
 
 export default () => {
   const { t } = useTranslation()
@@ -51,11 +52,20 @@ export default () => {
           <Subtitle>{t('dumpId')} {currentDumpId}</Subtitle>
         </TitleContainer>
         <HeaderControls>
+          <ThemeToggle />
           <LanguageSwitcher />
+          <LogoutButton href='/logout'>
+            <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+              <path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4' />
+              <polyline points='16 17 21 12 16 7' />
+              <line x1='21' y1='12' x2='9' y2='12' />
+            </svg>
+            {t('logout')}
+          </LogoutButton>
           <BackLink href={window.location.pathname}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
+            <svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+              <line x1='19' y1='12' x2='5' y2='12' />
+              <polyline points='12 19 5 12 12 5' />
             </svg>
             {t('backToSearch')}
           </BackLink>
@@ -75,7 +85,7 @@ export default () => {
         </TabPanel>
         <TabPanel>
           <ConsoleWrapper>
-            <Console logs={logs} variant="dark" />
+            <Console logs={logs} variant='dark' />
           </ConsoleWrapper>
         </TabPanel>
       </Tabs>
@@ -114,7 +124,7 @@ const Title = styled.h1`
   font-size: 1.8rem;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(90deg, #ffffff 0%, #a5b4fc 100%);
+  background: var(--title-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `
@@ -141,7 +151,7 @@ const BackLink = styled.a`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-bg);
   border: 1px solid var(--panel-border);
   color: var(--text-primary);
   text-decoration: none;
@@ -153,10 +163,34 @@ const BackLink = styled.a`
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--input-bg-focus);
     border-color: var(--accent-color);
     box-shadow: 0 0 10px var(--accent-glow);
     transform: translateX(-2px);
+  }
+`
+
+const LogoutButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+    transform: translateY(-1px);
+    color: #ffffff;
   }
 `
 
@@ -167,5 +201,3 @@ const ConsoleWrapper = styled.div`
   border: 1px solid var(--panel-border);
   overflow: hidden;
 `
-
-

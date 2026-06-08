@@ -12,6 +12,8 @@ import versionRoute from './routes/version.mjs'
 import basicAuth from './basic-auth.mjs'
 import jwtAuth from './jwt-auth.mjs'
 import { setupServices } from './services/setup.mjs'
+import cookieParser from 'cookie-parser'
+import keycloakAuth, { isKeycloakEnabled, handleCallback, handleLogout, forbiddenHtml } from './keycloak-auth.mjs'
 
 const {
   APP_PORT,
@@ -33,8 +35,14 @@ async function startServer () {
 
   // use custom logger
   app.use(expressLog)
+  app.use(cookieParser())
 
   router.use('/healthcheck', healthRoute)
+
+  router.get('/test-403', (req, res) => {
+    res.set('Content-Type', 'text/html; charset=utf-8')
+    res.status(403).send(forbiddenHtml)
+  })
 
   // This config endpoint is specific to a JaaS deployment.
   // The presence of the RTCSTATS_FILES_ENDPOINT env variable indicates a JaaS environment.
@@ -49,11 +57,19 @@ async function startServer () {
     router.use('/rtc-visualizer', express.static(path.join(path.resolve(), 'public')))
   }
 
+  if (isKeycloakEnabled) {
+    router.get('/keycloak/callback', handleCallback)
+    router.get('/logout', handleLogout)
+    router.use(keycloakAuth)
+  }
+
   // serve static files from /public
   router.use(express.static(path.join(path.resolve(), 'public')))
 
-  // use basic auth
-  router.use(basicAuth)
+  if (!isKeycloakEnabled) {
+    // use basic auth
+    router.use(basicAuth)
+  }
 
   router.use('/files', filesRoutes)
   router.use('/search', searchRoutes)

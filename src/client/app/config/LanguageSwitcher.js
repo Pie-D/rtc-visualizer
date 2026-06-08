@@ -32,8 +32,7 @@ const SwitcherButton = styled.button`
 
   .flag-wrapper {
     width: 28px;
-    height: 28px;
-    border-radius: 50%;
+    height: 19px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -45,27 +44,26 @@ const SwitcherButton = styled.button`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transform: scale(1.4);
   }
 `
 
 const VietnamFlag = () => (
-  <svg viewBox="0 0 30 20">
-    <rect width="30" height="20" fill="#da251d" />
-    <polygon points="15,4 16.18,7.63 20,7.63 16.91,9.88 18.09,13.5 15,11.25 11.91,13.5 13.09,9.88 10,7.63 13.82,7.63" fill="#ffff00" />
+  <svg viewBox='0 0 30 20'>
+    <rect width='30' height='20' fill='#da251d' />
+    <polygon points='15,4 16.18,7.63 20,7.63 16.91,9.88 18.09,13.5 15,11.25 11.91,13.5 13.09,9.88 10,7.63 13.82,7.63' fill='#ffff00' />
   </svg>
 )
 
 const UKFlag = () => (
-  <svg viewBox="0 0 60 30">
-    <clipPath id="s">
-      <rect width="60" height="30" />
+  <svg viewBox='0 0 60 30'>
+    <clipPath id='s'>
+      <rect width='60' height='30' />
     </clipPath>
-    <rect width="60" height="30" fill="#012169" />
-    <path d="M0 0l60 30M60 0L0 30" stroke="#fff" strokeWidth="6" />
-    <path d="M0 0l60 30M60 0L0 30" stroke="#c8102e" strokeWidth="4" clipPath="url(#s)" />
-    <path d="M30 0v30M0 15h60" stroke="#fff" strokeWidth="10" />
-    <path d="M30 0v30M0 15h60" stroke="#c8102e" strokeWidth="6" />
+    <rect width='60' height='30' fill='#012169' />
+    <path d='M0 0l60 30M60 0L0 30' stroke='#fff' strokeWidth='6' />
+    <path d='M0 0l60 30M60 0L0 30' stroke='#c8102e' strokeWidth='4' clipPath='url(#s)' />
+    <path d='M30 0v30M0 15h60' stroke='#fff' strokeWidth='10' />
+    <path d='M30 0v30M0 15h60' stroke='#c8102e' strokeWidth='6' />
   </svg>
 )
 
@@ -90,10 +88,9 @@ export default () => {
       onClick={toggleLanguage}
       title={tooltipText}
     >
-      <div className="flag-wrapper">
+      <div className='flag-wrapper'>
         {language === 'en' ? <UKFlag /> : <VietnamFlag />}
       </div>
     </SwitcherButton>
   )
 }
-

@@ -24,4 +24,3 @@ export const getRawSearchParams = state => state.search.params
 export const getSearchTotal = state => state.search.total || 0
 export const getSearchPage = state => state.search.page || 1
 export const getSearchLimit = state => state.search.limit || 10
-

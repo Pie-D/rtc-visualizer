@@ -72,6 +72,7 @@
     "@reduxjs/toolkit": "^1.9.0",
     "aws-sdk": "^2.1265.0",
     "console-feed": "^3.4.0",
+    "cookie-parser": "^1.4.7",
     "core-js": "^3.8.3",
     "dotenv": "8.2.0",
     "dynamoose": "^2.6.0",

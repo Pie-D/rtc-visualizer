@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 
 const locales = {
   en: {
-    dashboardSubtitle: 'C-Meet Real-time Connection Quality & Call Statistics Dashboard',
+    dashboardSubtitle: 'C-Meet Connection Quality & Call Statistics Dashboard',
     searchBy: 'Search files by',
     conferenceLabel: 'Conference name or URL (optional)',
     conferencePlaceholder: 'thisismyconference (or empty for all)',
@@ -24,17 +24,17 @@ const locales = {
     participantsCount: 'participants',
     permalink: 'Permalink:',
     conferenceId: 'Conference ID:',
-    startTime: 'Start Time:',
-    endTime: 'End Time:',
+    startTime: 'Start time:',
+    endTime: 'End time:',
     participants: 'Participants:',
-    fileParticipantDetails: 'File / Participant Details',
+    fileParticipantDetails: 'File / participant details',
     joined: 'Joined:',
     left: 'Left:',
-    viewStats: 'View Stats',
-    downloadDumpFile: 'Download Dump File',
-    sessionAnalysis: 'Session Analysis',
+    viewStats: 'View stats',
+    downloadDumpFile: 'Download dump file',
+    sessionAnalysis: 'Session analysis',
     dumpId: 'Dump ID:',
-    backToSearch: 'Back to Search',
+    backToSearch: 'Back to search',
     statsTab: 'Stats',
     logsTab: 'Logs',
     errorFetch: 'Error fetching data:',
@@ -42,10 +42,11 @@ const locales = {
     errorStatus: 'Status error:',
     pageOf: 'Page {page} of {pages}',
     prevPage: 'Previous',
-    nextPage: 'Next'
+    nextPage: 'Next',
+    logout: 'Logout'
   },
   vi: {
-    dashboardSubtitle: 'Bảng điều khiển Thống kê Cuộc gọi & Chất lượng Kết nối Thời gian thực C-Meet',
+    dashboardSubtitle: 'Bảng điều khiển thống kê cuộc họp & chất lượng kết nối của C-Meet',
     searchBy: 'Tìm kiếm tệp tin theo',
     conferenceLabel: 'Tên cuộc họp hoặc URL (tùy chọn)',
     conferencePlaceholder: 'Tên cuộc họp (hoặc để trống cho tất cả)',
@@ -77,15 +78,15 @@ const locales = {
     downloadDumpFile: 'Tải tệp tin Dump',
     sessionAnalysis: 'Phân tích phiên',
     dumpId: 'Mã Dump (Dump ID):',
-    backToSearch: 'Quay lại Tìm kiếm',
+    backToSearch: 'Quay lại tìm kiếm',
     statsTab: 'Thống kê',
     logsTab: 'Nhật ký',
     errorFetch: 'Lỗi tải dữ liệu:',
     errorParse: 'Lỗi phân tích dữ liệu:',
     errorStatus: 'Lỗi trạng thái:',
-    pageOf: 'Trang {page} / {pages}',
     prevPage: 'Trước',
-    nextPage: 'Sau'
+    nextPage: 'Sau',
+    logout: 'Đăng xuất'
   }
 }
 

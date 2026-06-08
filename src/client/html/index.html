@@ -8,8 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
         rel="stylesheet">
+    <script>
+        (function() {
+            var savedTheme = localStorage.getItem('rtc-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 </head>
 <style>
     :root {
@@ -29,14 +35,73 @@
         --accent-red: #ff0055;
         --accent-blue: #00bbf9;
         --card-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-        --font-main: 'Plus Jakarta Sans', sans-serif;
-        --font-heading: 'Outfit', sans-serif;
+        --font-main: 'Public Sans', sans-serif;
+        --font-heading: 'Public Sans', sans-serif;
+
+        /* Theme support variables */
+        --title-gradient: linear-gradient(90deg, #ffffff 0%, #a5b4fc 100%);
+        --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+        --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+        --input-bg: rgba(255, 255, 255, 0.04);
+        --input-bg-focus: rgba(255, 255, 255, 0.08);
+        --input-placeholder: rgba(255, 255, 255, 0.25);
+        --strong-text: rgba(255, 255, 255, 0.6);
+        --select-option-bg: #151a22;
+        --details-open-border: rgba(255, 255, 255, 0.15);
+        --details-content-bg: rgba(0, 0, 0, 0.12);
+        --summary-hover: rgba(255, 255, 255, 0.02);
+        --dot-color: rgba(255, 255, 255, 0.2);
+        --pre-bg: rgba(0, 0, 0, 0.45);
+        --pre-color: #b5e2fa;
+        --pre-border: rgba(255, 255, 255, 0.05);
+        --table-bg: rgba(0, 0, 0, 0.25);
+        --th-bg: rgba(255, 255, 255, 0.04);
+        --tr-hover-bg: rgba(255, 255, 255, 0.02);
+        --graph-bg: rgba(0, 0, 0, 0.35);
+        --candidate-td-bg: rgba(255, 255, 255, 0.02);
+    }
+
+    :root[data-theme="light"] {
+        --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        --bg-color: #f8fafc;
+        --panel-bg: rgba(255, 255, 255, 0.85);
+        --panel-border: rgba(0, 0, 0, 0.08);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --accent-color: #008ff3;
+        --accent-glow: rgba(0, 143, 243, 0.25);
+        --accent-hover: #0076c9;
+        --accent-green: #0d9488;
+        --accent-red: #e11d48;
+        --accent-blue: #2563eb;
+        --card-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.06);
+
+        --title-gradient: linear-gradient(90deg, #0f172a 0%, #2563eb 100%);
+        --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+        --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+        --input-bg: rgba(0, 0, 0, 0.03);
+        --input-bg-focus: rgba(0, 0, 0, 0.05);
+        --input-placeholder: rgba(0, 0, 0, 0.4);
+        --strong-text: rgba(0, 0, 0, 0.7);
+        --select-option-bg: #ffffff;
+        --details-open-border: rgba(0, 0, 0, 0.08);
+        --details-content-bg: rgba(0, 0, 0, 0.015);
+        --summary-hover: rgba(0, 0, 0, 0.015);
+        --dot-color: rgba(0, 0, 0, 0.15);
+        --pre-bg: rgba(15, 23, 42, 0.04);
+        --pre-color: #0f172a;
+        --pre-border: rgba(0, 0, 0, 0.08);
+        --table-bg: rgba(255, 255, 255, 0.6);
+        --th-bg: rgba(0, 0, 0, 0.03);
+        --tr-hover-bg: rgba(0, 0, 0, 0.01);
+        --graph-bg: rgba(255, 255, 255, 0.7);
+        --candidate-td-bg: rgba(0, 0, 0, 0.01);
     }
 
     * {
         box-sizing: border-box;
         scrollbar-width: thin;
-        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        scrollbar-color: var(--scrollbar-thumb) transparent;
     }
 
     /* Custom Scrollbar */
@@ -50,12 +115,12 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
+        background: var(--scrollbar-thumb);
         border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: rgba(255, 255, 255, 0.3);
+        background: var(--scrollbar-thumb-hover);
     }
 
     body {
@@ -147,7 +212,7 @@
     }
 
     details {
-        background: rgba(255, 255, 255, 0.015);
+        background: var(--summary-hover);
         border: 1px solid var(--panel-border);
         border-radius: 14px;
         margin-bottom: 20px;
@@ -156,9 +221,9 @@
     }
 
     details[open] {
-        background: rgba(255, 255, 255, 0.035);
-        border-color: rgba(255, 255, 255, 0.15);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        background: var(--details-content-bg);
+        border-color: var(--details-open-border);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
     summary {
@@ -172,7 +237,7 @@
     }
 
     summary:hover {
-        background: rgba(255, 255, 255, 0.04);
+        background: var(--input-bg-focus);
     }
 
     details[open] summary {
@@ -181,15 +246,15 @@
     }
 
     pre {
-        background: rgba(0, 0, 0, 0.45);
+        background: var(--pre-bg);
         padding: 20px;
         border-radius: 10px;
         margin: 20px;
         overflow-x: auto;
         font-family: 'Courier New', Courier, monospace;
         font-size: 0.9rem;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        color: #b5e2fa;
+        border: 1px solid var(--pre-border);
+        color: var(--pre-color);
     }
 
     /* Tables */
@@ -197,7 +262,7 @@
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        background: rgba(0, 0, 0, 0.25);
+        background: var(--table-bg);
         border-radius: 10px;
         overflow: hidden;
     }
@@ -210,7 +275,7 @@
     }
 
     th {
-        background-color: rgba(255, 255, 255, 0.04);
+        background-color: var(--th-bg);
         color: var(--text-primary);
         font-family: var(--font-heading);
         font-weight: 600;
@@ -224,16 +289,16 @@
     }
 
     tr:hover td {
-        background-color: rgba(255, 255, 255, 0.02);
+        background-color: var(--tr-hover-bg);
     }
 
     #tables>details:nth-of-type(even) {
-        background-color: rgba(255, 255, 255, 0.005);
+        background-color: var(--summary-hover);
     }
 
     .graph {
         margin: 24px 0;
-        background: rgba(0, 0, 0, 0.35);
+        background: var(--graph-bg);
         border-radius: 16px;
         padding: 20px;
         border: 1px solid var(--panel-border);
@@ -245,12 +310,12 @@
     }
 
     .candidatepairtable td {
-        background-color: rgba(255, 255, 255, 0.02);
+        background-color: var(--candidate-td-bg);
         border: 1px solid var(--panel-border);
     }
 
     .candidatepairtable tr:hover td {
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: var(--input-bg-focus);
     }
 
     /* END CSS used for raw plotting */

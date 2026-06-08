@@ -20,4 +20,3 @@ export default ({ type, error }) => {
 
   return <Container>{`${text} ${error}`}</Container>
 }
-
