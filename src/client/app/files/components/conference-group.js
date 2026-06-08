@@ -5,6 +5,7 @@ import { formatDate } from '../../utils'
 import Row from './row'
 import SortOptions from './sort-options'
 import { Urls } from '../../requests'
+import { useTranslation } from '../../locales'
 
 const Content = styled.div`
   padding: 24px;
@@ -151,22 +152,28 @@ const TableAndSort = styled.div`
 `
 
 export default ({ id, data }) => {
+  const { t } = useTranslation()
   const { group, startDate, endDate, participants } = data
   const isNonGrouped = id === 'other'
   const permalink = Urls.Permalink(group[0]?.sessionId)
+  const conferenceId = group[0]?.conferenceId || group[0]?.conferenceUrl
 
   return (
     <Details>
       <SummaryContainer>
         <SummaryDetails>
           {isNonGrouped
-            ? <NonGroup><Emph>Other </Emph>{`${group.length} participants`}</NonGroup>
+            ? <NonGroup><Emph>{t('other')} </Emph>{`${group.length} ${t('participantsCount')}`}</NonGroup>
             : (
               <>
-                <MetaItem><Emph>Permalink:</Emph> <PermalinkLink href={permalink} target="_blank">{permalink}</PermalinkLink></MetaItem>
-                <MetaItem><Emph>Start Time:</Emph> {formatDate(startDate)}</MetaItem>
-                <MetaItem><Emph>End Time:</Emph> {formatDate(endDate)}</MetaItem>
-                <MetaItem><Emph>Participants:</Emph> {participants}</MetaItem>
+                <MetaItem><Emph>{t('permalink')}</Emph> <PermalinkLink href={permalink} target="_blank">{permalink}</PermalinkLink></MetaItem>
+                {conferenceId && <MetaItem><Emph>{t('conferenceId')}</Emph> {conferenceId}</MetaItem>}
+                <MetaItem>
+                  <Emph>{t('startTime')}</Emph> {formatDate(startDate)}
+                  <span style={{ margin: '0 8px', color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+                  <Emph>{t('endTime')}</Emph> {formatDate(endDate)}
+                </MetaItem>
+                <MetaItem><Emph>{t('participants')}</Emph> {participants}</MetaItem>
               </>
               )}
         </SummaryDetails>
@@ -176,7 +183,7 @@ export default ({ id, data }) => {
           <Table>
             <thead>
               <tr>
-                <th>File / Participant Details</th>
+                <th>{t('fileParticipantDetails')}</th>
               </tr>
             </thead>
             <tbody>
@@ -189,3 +196,4 @@ export default ({ id, data }) => {
     </Details>
   )
 }
+
