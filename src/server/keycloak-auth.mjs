@@ -3,6 +3,36 @@ import logger from './logger.mjs'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import https from 'https'
+
+function httpRequest (url, options = {}) {
+  return new Promise((resolve, reject) => {
+    const req = https.request(url, options, (res) => {
+      let data = ''
+      res.on('data', (chunk) => {
+        data += chunk
+      })
+      res.on('end', () => {
+        resolve({
+          ok: res.statusCode >= 200 && res.statusCode < 300,
+          status: res.statusCode,
+          statusText: res.statusMessage,
+          json: () => Promise.resolve(JSON.parse(data)),
+          text: () => Promise.resolve(data)
+        })
+      })
+    })
+
+    req.on('error', (err) => {
+      reject(err)
+    })
+
+    if (options.body) {
+      req.write(options.body)
+    }
+    req.end()
+  })
+}
 
 const {
   KEYCLOAK_ENABLED,
@@ -27,7 +57,8 @@ const forbiddenHtmlPath = path.join(__dirname, 'forbidden.html')
 export let forbiddenHtml = '<h3>Forbidden: Access denied. You must be a tenant-admin or tenant-superadmin to access this tool.</h3>'
 
 try {
-  forbiddenHtml = fs.readFileSync(forbiddenHtmlPath, 'utf8')
+  const rawHtml = fs.readFileSync(forbiddenHtmlPath, 'utf8')
+  forbiddenHtml = rawHtml.replace(/__PUBLIC_BASE_PATH__/g, process.env.PUBLIC_BASE_PATH || '')
 } catch (error) {
   logger.error(`Failed to read forbidden.html template: ${error.message}`)
 }
@@ -68,7 +99,7 @@ async function getPublicKey (token) {
     const certsUrl = `${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs`
     logger.info(`Fetching Keycloak certificates from: ${certsUrl}`)
 
-    const response = await fetch(certsUrl)
+    const response = await httpRequest(certsUrl)
     if (!response.ok) {
       throw new Error(`Failed to fetch JWKS from Keycloak: ${response.statusText}`)
     }
@@ -170,9 +201,13 @@ export default async (req, res, next) => {
   // 4. Redirect to Keycloak authorization endpoint
   const host = req.get('host')
   const protocol = req.headers['x-forwarded-proto'] || req.protocol
-  const redirectUri = process.env.KEYCLOAK_REDIRECT_URI || `${protocol}://${host}/keycloak/callback`
+  const basePath = process.env.PUBLIC_BASE_PATH || ''
+  const redirectUri = process.env.KEYCLOAK_REDIRECT_URI || `${protocol}://${host}${basePath}/keycloak/callback`
 
-  const originalUrl = req.originalUrl || '/'
+  let originalUrl = req.originalUrl || '/'
+  if (basePath && !originalUrl.startsWith(basePath)) {
+    originalUrl = basePath + (originalUrl === '/' ? '' : originalUrl)
+  }
   res.cookie('rtc_redirect_to', originalUrl, {
     httpOnly: true,
     secure: req.secure || protocol === 'https',
@@ -197,7 +232,8 @@ export const handleCallback = async (req, res) => {
 
   const host = req.get('host')
   const protocol = req.headers['x-forwarded-proto'] || req.protocol
-  const redirectUri = process.env.KEYCLOAK_REDIRECT_URI || `${protocol}://${host}/keycloak/callback`
+  const basePath = process.env.PUBLIC_BASE_PATH || ''
+  const redirectUri = process.env.KEYCLOAK_REDIRECT_URI || `${protocol}://${host}${basePath}/keycloak/callback`
 
   try {
     const tokenUrl = `${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`
@@ -211,12 +247,12 @@ export const handleCallback = async (req, res) => {
       params.append('client_secret', KEYCLOAK_CLIENT_SECRET)
     }
 
-    const response = await fetch(tokenUrl, {
+    const response = await httpRequest(tokenUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: params
+      body: params.toString()
     })
 
     if (!response.ok) {
@@ -242,7 +278,11 @@ export const handleCallback = async (req, res) => {
       maxAge: expires_in * 1000
     })
 
-    const redirectTo = hasRole ? (req.cookies.rtc_redirect_to || '/') : '/'
+    const basePath = process.env.PUBLIC_BASE_PATH || ''
+    let redirectTo = hasRole ? (req.cookies.rtc_redirect_to || `${basePath}/`) : `${basePath}/`
+    if (basePath && !redirectTo.startsWith(basePath) && redirectTo.startsWith('/')) {
+      redirectTo = basePath + (redirectTo === '/' ? '' : redirectTo)
+    }
     res.clearCookie('rtc_redirect_to')
 
     return res.redirect(redirectTo)
@@ -255,9 +295,25 @@ export const handleCallback = async (req, res) => {
 export const handleLogout = (req, res) => {
   res.clearCookie('rtc_session')
 
-  const host = req.get('host')
-  const protocol = req.headers['x-forwarded-proto'] || req.protocol
-  const postLogoutRedirect = `${protocol}://${host}/`
+  let postLogoutRedirect = ''
+  if (process.env.KEYCLOAK_REDIRECT_URI) {
+    try {
+      const parsedUrl = new URL(process.env.KEYCLOAK_REDIRECT_URI)
+      const pathname = parsedUrl.pathname
+      const callbackIndex = pathname.lastIndexOf('/keycloak/callback')
+      const parentPath = callbackIndex !== -1 ? pathname.substring(0, callbackIndex) : ''
+      postLogoutRedirect = `${parsedUrl.protocol}//${parsedUrl.host}${parentPath}/`
+    } catch (e) {
+      logger.error(`Failed to parse KEYCLOAK_REDIRECT_URI for logout redirect: ${e.message}`)
+    }
+  }
+
+  if (!postLogoutRedirect) {
+    const host = req.get('host')
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol
+    const basePath = process.env.PUBLIC_BASE_PATH || ''
+    postLogoutRedirect = `${protocol}://${host}${basePath}/`
+  }
 
   const logoutUrl = `${KEYCLOAK_AUTH_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/logout` +
     `?client_id=${encodeURIComponent(KEYCLOAK_CLIENT_ID)}` +

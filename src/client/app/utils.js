@@ -33,3 +33,13 @@ export const buildRelativeUrl = (path, queryParams = {}) => {
 
   return url
 }
+
+export const getLogoutUrl = () => {
+  const path = window.location.pathname
+  const match = path.match(/^\/([^/]+)/)
+  const firstSegment = match ? match[1] : ''
+  if (firstSegment && firstSegment !== 'logout' && firstSegment !== 'search') {
+    return `/${firstSegment}/logout`
+  }
+  return '/logout'
+}
