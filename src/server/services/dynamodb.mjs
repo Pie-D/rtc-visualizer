@@ -107,10 +107,10 @@ export class DynamoDBAdapter extends DatabaseAdapter {
     }
   }
 
-  async doQuery ({ sessionId, meetingUniqueId, conferenceId, minDate, maxDate }) {
+  async doQuery ({ sessionId, meetingUniqueId, conferenceId, minDate, maxDate, page, limit }) {
     let query
     if (sessionId || meetingUniqueId) {
-      query = this._makeSessionQuery(sessionId || meetingUniqueId)
+      query = this._sessions.query('sessionId').eq(sessionId || meetingUniqueId).using('sessionId-startDate-index')
     } else if (!conferenceId || conferenceId === '*') {
       query = this._makeScanQuery(minDate, maxDate)
     } else {
@@ -122,6 +122,16 @@ export class DynamoDBAdapter extends DatabaseAdapter {
     results = Array.from(results)
 
     logger.info('Found in db:', results)
+
+    const total = results.length
+    if (page !== undefined && limit !== undefined) {
+      // Sort results by startDate descending (newest first)
+      results.sort((a, b) => b.startDate - a.startDate)
+      
+      const start = (page - 1) * limit
+      const paginatedResults = results.slice(start, start + limit)
+      return { results: paginatedResults, total }
+    }
 
     return results
   }

@@ -35,7 +35,9 @@ describe('Search Routes', () => {
     await searchHandler(req, res)
 
     expect(mockMetadataManager.doQuery).toHaveBeenCalledWith({
-      conferenceId: 'myconference'
+      conferenceId: 'myconference',
+      page: 1,
+      limit: 10
     })
     expect(res.send).toHaveBeenCalledWith(mockSearchResults)
   })
@@ -58,7 +60,9 @@ describe('Search Routes', () => {
       userId: 'user-id',
       conferenceId: '8x8.vc/tenant/conf-id',
       minDate: new Date('2025-08-15T00:00:00').getTime(),
-      maxDate: new Date('2025-08-16T23:59:59').getTime()
+      maxDate: new Date('2025-08-16T23:59:59').getTime(),
+      page: 1,
+      limit: 10
     }
     expect(mockMetadataManager.doQuery).toHaveBeenCalledWith(expectedParams)
   })
@@ -73,7 +77,7 @@ describe('Search Routes', () => {
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith({
       error: 'ParamError',
-      text: 'Param "conference" or "session" is required'
+      text: 'At least one search parameter (conference, session, or date range) is required'
     })
   })
 

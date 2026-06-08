@@ -15,13 +15,19 @@ const searchError = error => ({
 })
 
 export const search = body => async dispatch => {
+  const queryParams = {
+    page: 1,
+    limit: 10,
+    ...body
+  }
+
   dispatch({
     type: Actions.SearchStart,
-    payload: body
+    payload: queryParams
   })
 
   try {
-    const res = await makeRequest(Urls.Search(body))
+    const res = await makeRequest(Urls.Search(queryParams))
 
     if (res.ok) {
       const payload = await res.json()

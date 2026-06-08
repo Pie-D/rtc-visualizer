@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import { getSearchTimeVisible, getSearchTime } from '../selectors'
+import { useTranslation } from '../../locales'
 
 const Container = styled.div`
   font-size: 0.8em;
@@ -10,6 +11,7 @@ const Container = styled.div`
 `
 
 export default () => {
+  const { t } = useTranslation()
   const searchTimeVisible = useSelector(getSearchTimeVisible)
   const time = useSelector(getSearchTime)
 
@@ -17,9 +19,10 @@ export default () => {
     searchTimeVisible
       ? (
         <Container>
-          <div><div>{`Search took ${time / 1000} s`}</div></div>
+          <div><div>{t('searchTook', { time: time / 1000 })}</div></div>
         </Container>
         )
       : null
   )
 }
+

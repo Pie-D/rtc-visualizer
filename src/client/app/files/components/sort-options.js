@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 
 import { sortGroup } from '../actions'
 import { SORT_TYPES } from '../reducer'
+import { useTranslation } from '../../locales'
 
 const Container = styled.div`
   display: flex;
@@ -48,6 +49,7 @@ const Options = styled.select`
 `
 
 export default ({ id }) => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const onChange = ({ target: { value } }) => {
     dispatch(sortGroup(id, value))
@@ -55,17 +57,18 @@ export default ({ id }) => {
 
   return (
     <Container>
-      <Label>Sort by</Label>
+      <Label>{t('sortBy')}</Label>
       <Options name='sort' onChange={onChange}>
-        <option value={SORT_TYPES.none}>None</option>
-        <option value={SORT_TYPES.userAscending}>Name A-Z</option>
-        <option value={SORT_TYPES.userDescending}>Name Z-A</option>
-        <option value={SORT_TYPES.joinAscending}>Join - Ascending</option>
-        <option value={SORT_TYPES.joinDescending}>Join - Descending</option>
-        <option value={SORT_TYPES.leaveAscending}>Leave - Ascending</option>
-        <option value={SORT_TYPES.leaveDescending}>Leave - Descending</option>
+        <option value={SORT_TYPES.none}>{t('sortNone')}</option>
+        <option value={SORT_TYPES.userAscending}>{t('sortNameAsc')}</option>
+        <option value={SORT_TYPES.userDescending}>{t('sortNameDesc')}</option>
+        <option value={SORT_TYPES.joinAscending}>{t('sortJoinAsc')}</option>
+        <option value={SORT_TYPES.joinDescending}>{t('sortJoinDesc')}</option>
+        <option value={SORT_TYPES.leaveAscending}>{t('sortLeaveAsc')}</option>
+        <option value={SORT_TYPES.leaveDescending}>{t('sortLeaveDesc')}</option>
       </Options>
     </Container>
   )
 }
+
 

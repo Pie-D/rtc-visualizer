@@ -7,7 +7,7 @@ export default store => next => action => {
   if (type === SearchActions.SearchFinish) {
     store.dispatch({
       type: FileActions.SetData,
-      payload
+      payload: payload.results || []
     })
   }
 

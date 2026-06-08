@@ -7,8 +7,11 @@ import { showStats } from './raw/legacy'
 import { getFileStatus } from './files/selectors'
 import { Console } from 'console-feed'
 import { fetchFileBasicAuth, fetchFileJWTAuth } from './files/actions'
+import { useTranslation } from './locales'
+import LanguageSwitcher from './config/LanguageSwitcher'
 
 export default () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -44,21 +47,24 @@ export default () => {
     <RenderContainer>
       <Header>
         <TitleContainer>
-          <Title>Session Analysis</Title>
-          <Subtitle>Dump ID: {currentDumpId}</Subtitle>
+          <Title>{t('sessionAnalysis')}</Title>
+          <Subtitle>{t('dumpId')} {currentDumpId}</Subtitle>
         </TitleContainer>
-        <BackLink href={window.location.pathname}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          Back to Search
-        </BackLink>
+        <HeaderControls>
+          <LanguageSwitcher />
+          <BackLink href={window.location.pathname}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            {t('backToSearch')}
+          </BackLink>
+        </HeaderControls>
       </Header>
       <Tabs>
         <TabList>
-          <Tab>Stats</Tab>
-          <Tab>Logs</Tab>
+          <Tab>{t('statsTab')}</Tab>
+          <Tab>{t('logsTab')}</Tab>
         </TabList>
         <TabPanel forceRender>
           <div id='raw'>
@@ -120,6 +126,17 @@ const Subtitle = styled.span`
   word-break: break-all;
 `
 
+const HeaderControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  @media (max-width: 576px) {
+    width: 100%;
+    justify-content: space-between;
+  }
+`
+
 const BackLink = styled.a`
   display: inline-flex;
   align-items: center;
@@ -150,4 +167,5 @@ const ConsoleWrapper = styled.div`
   border: 1px solid var(--panel-border);
   overflow: hidden;
 `
+
 

@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Urls } from '../../requests'
 import { formatDate } from '../../utils'
+import { useTranslation } from '../../locales'
 
 const RowContainer = styled.div`
   display: flex;
@@ -98,6 +99,7 @@ const DownloadButton = styled.a`
 `
 
 export default ({ dumpId, userId, startDate, endDate, app }) => {
+  const { t } = useTranslation()
   return (
     <tr>
       <td>
@@ -105,9 +107,9 @@ export default ({ dumpId, userId, startDate, endDate, app }) => {
           <ParticipantInfo>
             <Name>{userId || 'Unknown User'}</Name>
             <Times>
-              <span><strong>Joined:</strong> {formatDate(startDate)}</span>
+              <span><strong>{t('joined')}</strong> {formatDate(startDate)}</span>
               <span>•</span>
-              <span><strong>Left:</strong> {formatDate(endDate)}</span>
+              <span><strong>{t('left')}</strong> {formatDate(endDate)}</span>
             </Times>
           </ParticipantInfo>
           {app && <AppBadge>{app}</AppBadge>}
@@ -118,9 +120,9 @@ export default ({ dumpId, userId, startDate, endDate, app }) => {
                 <polyline points="15 3 21 3 21 9"/>
                 <line x1="10" y1="14" x2="21" y2="3"/>
               </svg>
-              View Stats
+              {t('viewStats')}
             </ActionButton>
-            <DownloadButton href={Urls.Download(dumpId)} title="Download Dump File">
+            <DownloadButton href={Urls.Download(dumpId)} title={t('downloadDumpFile')}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7 10 12 15 17 10"/>
@@ -133,4 +135,5 @@ export default ({ dumpId, userId, startDate, endDate, app }) => {
     </tr>
   )
 }
+
 

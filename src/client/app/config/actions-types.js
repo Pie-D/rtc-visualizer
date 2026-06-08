@@ -1,5 +1,7 @@
 import { generateActions } from '../utils'
 
 export default generateActions([
-  'SetConfig'
+  'SetConfig',
+  'SetLanguage'
 ])
+

@@ -19,3 +19,9 @@ export const getSearchFinished = state => state.search.searchFinished
 export const getSearchTime = ({ search: { startSearchTime, endSearchTime } }) => (endSearchTime - startSearchTime)
 
 export const getSearchTimeVisible = ({ search: { searchInProgress, searchFinished } }) => searchFinished && !searchInProgress
+
+export const getRawSearchParams = state => state.search.params
+export const getSearchTotal = state => state.search.total || 0
+export const getSearchPage = state => state.search.page || 1
+export const getSearchLimit = state => state.search.limit || 10
+

@@ -59,15 +59,34 @@ export class MongoDBAdapter extends DatabaseAdapter {
     return query
   }
 
-  async doQuery ({ sessionId, meetingUniqueId, conferenceId, minDate, maxDate }) {
+  async doQuery ({ sessionId, meetingUniqueId, conferenceId, minDate, maxDate, page, limit }) {
     const query = (sessionId || meetingUniqueId)
       ? this._makeSessionQuery(sessionId || meetingUniqueId)
       : this._makeConferenceQuery(conferenceId, minDate, maxDate)
 
-    const results = await this._model.find(query)
+    const isPaginated = page !== undefined && limit !== undefined
 
-    logger.info('Found in db:', results)
+    let queryBuilder = this._model.find(query)
+    if (typeof queryBuilder.sort === 'function') {
+      queryBuilder = queryBuilder.sort({ startDate: -1 })
+    }
 
-    return results
+    if (isPaginated && typeof queryBuilder.skip === 'function') {
+      const skip = (page - 1) * limit
+      const results = await queryBuilder.skip(skip).limit(limit)
+      const total = typeof this._model.countDocuments === 'function'
+        ? await this._model.countDocuments(query)
+        : results.length
+
+      logger.info('Found in db (paginated):', { resultsCount: results.length, total })
+
+      return { results, total }
+    } else {
+      const results = await queryBuilder
+      logger.info('Found in db:', results)
+      return results
+    }
   }
+
+
 }

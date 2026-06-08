@@ -6,7 +6,10 @@ const defaultState = {
   error: null,
   params: null,
   startSearchTime: 0,
-  endSearchTime: 0
+  endSearchTime: 0,
+  total: 0,
+  page: 1,
+  limit: 10
 }
 
 export default (state = defaultState, action) => {
@@ -29,7 +32,10 @@ export default (state = defaultState, action) => {
         ...state,
         searchInProgress: false,
         searchFinished: true,
-        endSearchTime: new Date().getTime()
+        endSearchTime: new Date().getTime(),
+        total: payload.total || 0,
+        page: payload.page || 1,
+        limit: payload.limit || 10
       }
     }
 

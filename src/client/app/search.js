@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import { FilesList } from './files/components'
-import { SearchForm } from './search/components'
+import { SearchForm, Pagination } from './search/components'
+import { useTranslation } from './locales'
+import LanguageSwitcher from './config/LanguageSwitcher'
+
 
 const DashboardContainer = styled.div`
   max-width: 1200px;
@@ -11,11 +14,23 @@ const DashboardContainer = styled.div`
 
 const Header = styled.header`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 16px;
   margin-bottom: 40px;
   border-bottom: 1px solid var(--panel-border);
   padding-bottom: 24px;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
 `
 
 const Logo = styled.div`
@@ -85,22 +100,29 @@ const Card = styled.div`
 `
 
 export default () => {
+  const { t } = useTranslation()
+
   return (
     <DashboardContainer>
       <Header>
-        <Logo>
-          <LogoIcon />
-        </Logo>
-        <HeaderText>
-          <Title>RTC Visualizer</Title>
-          <Subtitle>C-Meet Real-time Connection Quality & Call Statistics Dashboard</Subtitle>
-        </HeaderText>
+        <HeaderLeft>
+          <Logo>
+            <LogoIcon />
+          </Logo>
+          <HeaderText>
+            <Title>RTC Visualizer</Title>
+            <Subtitle>{t('dashboardSubtitle')}</Subtitle>
+          </HeaderText>
+        </HeaderLeft>
+        <LanguageSwitcher />
       </Header>
       <Card>
         <SearchForm />
       </Card>
       <FilesList />
+      <Pagination />
     </DashboardContainer>
   )
 }
+
 

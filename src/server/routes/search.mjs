@@ -63,9 +63,20 @@ export function createSearchRoutes (metadataManager) {
     }
 
     try {
-      const results = await metadataManager.doQuery(params)
+      const page = parseInt(query.page, 10) || 1
+      const limit = parseInt(query.limit, 10) || 10
+      const dbResponse = await metadataManager.doQuery({ ...params, page, limit })
 
-      res.send(results)
+      if (dbResponse && typeof dbResponse === 'object' && 'results' in dbResponse) {
+        res.send({
+          results: dbResponse.results,
+          total: dbResponse.total,
+          page,
+          limit
+        })
+      } else {
+        res.send(dbResponse)
+      }
     } catch (err) {
       logger.error('Error querying', { params, err })
 

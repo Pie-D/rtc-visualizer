@@ -7,6 +7,7 @@ import { search } from '../actions'
 import SearchDetails from './search-details'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { useTranslation } from '../../locales'
 
 const Frame = styled.fieldset`
   border: none;
@@ -141,6 +142,7 @@ function getMinDatePlaceholder () {
 }
 
 export default () => {
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const searchInProgress = useSelector(getSearchInProgress)
   const error = useSelector(getSearchError)
@@ -172,32 +174,32 @@ export default () => {
   return (
     <div>
       <Frame>
-        <Legend>Search files by</Legend>
+        <Legend>{t('searchBy')}</Legend>
         <Form onSubmit={handleSubmit}>
           <SearchField>
-            <SearchLabel htmlFor='conferenceId'>Conference name or URL (optional)</SearchLabel>
+            <SearchLabel htmlFor='conferenceId'>{t('conferenceLabel')}</SearchLabel>
             <SearchInput
               type='text'
               autoComplete='on'
               name='conferenceId'
-              placeholder='thisismyconference (or empty for all)'
+              placeholder={t('conferencePlaceholder')}
               autoFocus
             />
           </SearchField>
           <SearchField>
-            <SearchLabel htmlFor='minDate'>Min Date</SearchLabel>
+            <SearchLabel htmlFor='minDate'>{t('minDate')}</SearchLabel>
             <DatePickerContainer>
               <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
             </DatePickerContainer>
           </SearchField>
           <SearchField>
-            <SearchLabel htmlFor='maxDate'>Max Date</SearchLabel>
+            <SearchLabel htmlFor='maxDate'>{t('maxDate')}</SearchLabel>
             <DatePickerContainer>
               <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
             </DatePickerContainer>
           </SearchField>
           <SearchField>
-            <SearchButton type='submit'>Search</SearchButton>
+            <SearchButton type='submit'>{t('search')}</SearchButton>
           </SearchField>
         </Form>
       </Frame>
@@ -208,3 +210,4 @@ export default () => {
     </div>
   )
 }
+
