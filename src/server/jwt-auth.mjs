@@ -6,7 +6,7 @@ function addPEMHeaders (headerlessPEMKey) {
 }
 
 function addRSAPublicKeyPEMHeaders (headerlessPEMKey) {
-  const nlHeaderlessPEMKey = headerlessPEMKey.replace(/(.{64})/g, '$1\n')
+  const nlHeaderlessPEMKey = headerlessPEMKey.replace(/(.{64})/g, '$1\n').trim()
 
   return `-----BEGIN PUBLIC KEY-----\n${nlHeaderlessPEMKey}\n-----END PUBLIC KEY-----`
 }

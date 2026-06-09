@@ -115,7 +115,7 @@ async function getPublicKey (token) {
       if (key.kid && key.x5c && key.x5c.length > 0) {
         // Format x5c to standard PEM certificate format
         const cleanCert = key.x5c[0].replace(/\s+/g, '')
-        const formattedCert = cleanCert.replace(/(.{64})/g, '$1\n')
+        const formattedCert = cleanCert.replace(/(.{64})/g, '$1\n').trim()
         const certPem = `-----BEGIN CERTIFICATE-----\n${formattedCert}\n-----END CERTIFICATE-----`
         keyCache.set(key.kid, certPem)
       }
