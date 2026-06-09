@@ -11,6 +11,7 @@ import { useTranslation } from './locales'
 import LanguageSwitcher from './config/LanguageSwitcher'
 import ThemeToggle from './config/ThemeToggle'
 import { getLogoutUrl } from './utils'
+import AIAnalysis from './ai/AIAnalysis'
 
 export default () => {
   const { t } = useTranslation()
@@ -41,6 +42,8 @@ export default () => {
     }
     showStats(data)
   }
+
+  const plainTextLogs = logs.map(l => l.data[0] || '').filter(Boolean)
 
   const urlParams = new URLSearchParams(window.location.search)
   const currentDumpId = urlParams.get('dumpId')
@@ -76,6 +79,7 @@ export default () => {
         <TabList>
           <Tab>{t('statsTab')}</Tab>
           <Tab>{t('logsTab')}</Tab>
+          <Tab>{t('aiTab')}</Tab>
         </TabList>
         <TabPanel forceRender>
           <div id='raw'>
@@ -88,6 +92,9 @@ export default () => {
           <ConsoleWrapper>
             <Console logs={logs} variant='dark' />
           </ConsoleWrapper>
+        </TabPanel>
+        <TabPanel>
+          <AIAnalysis logs={plainTextLogs} statsData={data} />
         </TabPanel>
       </Tabs>
     </RenderContainer>

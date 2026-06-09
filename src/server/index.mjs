@@ -9,6 +9,7 @@ import { createSearchRoutes } from './routes/search.mjs'
 import { createDownloadRoutes } from './routes/download.mjs'
 import healthRoute from './routes/health.mjs'
 import versionRoute from './routes/version.mjs'
+import { createAnalyzeRoutes } from './routes/analyze.mjs'
 import basicAuth from './basic-auth.mjs'
 import jwtAuth from './jwt-auth.mjs'
 import { setupServices } from './services/setup.mjs'
@@ -75,6 +76,7 @@ async function startServer () {
   router.use('/search', searchRoutes)
   router.use('/download', downloadRoutes)
   router.use('/version', versionRoute)
+  router.use('/analyze', createAnalyzeRoutes())
 
   // This server is designed to be path-agnostic. The public-facing subpath
   // is expected to be handled by a reverse proxy.
