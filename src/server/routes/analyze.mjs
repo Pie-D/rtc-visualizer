@@ -3,6 +3,103 @@ import logger from '../logger.mjs'
 import { paramError } from '../errors.mjs'
 
 /**
+ * Smartly filters and compresses log lines to fit within AI model context limits.
+ * - Truncates excessively long individual lines (like SDPs or large statistics).
+ * - Filters out repetitive ping-pong and keepalive logs.
+ * - Prioritizes error, warning, and ICE state change logs.
+ * - Always includes the last 100 non-spam logs for final state context.
+ * - Keeps everything in chronological order.
+ */
+function filterLogs (logs, maxLines = 200) {
+  // 1. Truncate each line to a maximum of 250 characters to prevent huge token count
+  const cleanLogs = logs.map(line => {
+    if (typeof line !== 'string') return ''
+    if (line.length > 250) {
+      return line.substring(0, 250) + '... [truncated]'
+    }
+    return line
+  })
+
+  if (cleanLogs.length <= maxLines) {
+    return cleanLogs
+  }
+
+  const importantKeywords = [
+    'error', 'warn', 'fail', 'disconnect', 'fatal', 'ice', 'connectionstate',
+    'signalingstate', 'rejected', 'timeout', 'exception', 'critical', 'unauthorized'
+  ]
+
+  const spamPatterns = [
+    /strophe: (ping|pong|keepalive)/i,
+    /send ping/i,
+    /received pong/i,
+    /xmpp.*ping/i,
+    /getstats/i
+  ]
+
+  const importantLogs = []
+  const normalLogs = []
+
+  for (let i = 0; i < cleanLogs.length; i++) {
+    const line = cleanLogs[i]
+    if (!line) continue
+    const isSpam = spamPatterns.some(pattern => pattern.test(line))
+    if (isSpam) {
+      continue
+    }
+
+    const lowerLine = line.toLowerCase()
+    const isImportant = importantKeywords.some(keyword => lowerLine.includes(keyword))
+
+    if (isImportant) {
+      importantLogs.push({ index: i, text: line })
+    } else {
+      normalLogs.push({ index: i, text: line })
+    }
+  }
+
+  const selectedLinesMap = new Map()
+
+  // 2. Keep the last 100 non-spam lines for final state
+  const lastLinesCount = Math.min(100, cleanLogs.length)
+  for (let i = cleanLogs.length - lastLinesCount; i < cleanLogs.length; i++) {
+    const line = cleanLogs[i]
+    if (!line) continue
+    const isSpam = spamPatterns.some(pattern => pattern.test(line))
+    if (!isSpam) {
+      selectedLinesMap.set(i, line)
+    }
+  }
+
+  // 3. Fill remaining capacity with important logs (errors/warnings)
+  const remainingCapacity = maxLines - selectedLinesMap.size
+  if (remainingCapacity > 0) {
+    for (const log of importantLogs) {
+      if (selectedLinesMap.size >= maxLines) {
+        break
+      }
+      selectedLinesMap.set(log.index, log.text)
+    }
+  }
+
+  // 4. Fill any remaining capacity with recent normal logs
+  const fillRemaining = maxLines - selectedLinesMap.size
+  if (fillRemaining > 0) {
+    for (let i = normalLogs.length - 1; i >= 0; i--) {
+      if (selectedLinesMap.size >= maxLines) {
+        break
+      }
+      const log = normalLogs[i]
+      selectedLinesMap.set(log.index, log.text)
+    }
+  }
+
+  // Sort by index to maintain chronological order
+  const sortedIndices = Array.from(selectedLinesMap.keys()).sort((a, b) => a - b)
+  return sortedIndices.map(index => selectedLinesMap.get(index))
+}
+
+/**
  * @returns {express.Router}
  */
 export function createAnalyzeRoutes () {
@@ -23,9 +120,8 @@ export function createAnalyzeRoutes () {
 
     logger.info(`Starting WebRTC log analysis using AI model: ${model} at ${apiUrl}`)
 
-    // Limit log size to prevent context window overflow
-    const maxLogLines = 150
-    const logsSubset = logs.length > maxLogLines ? logs.slice(-maxLogLines) : logs
+    // Smart filter logs (limit to 200 lines of highly relevant logs)
+    const logsSubset = filterLogs(logs, 200)
     const logsText = logsSubset.join('\n')
 
     // Build stats description if available
@@ -46,7 +142,7 @@ Báo cáo cần tập trung vào các điểm sau:
 Yêu cầu phản hồi ngắn gọn, trực diện, trình bày rõ ràng bằng Markdown (dùng bullet points, bold, code block nếu cần). Không nói dông dài.
 
 ---
-${statsText ? `[Dữ liệu thống kê tóm tắt]:\n${statsText}\n\n` : ''}[Logs hệ thống (150 dòng cuối)]:\n${logsText}
+${statsText ? `[Dữ liệu thống kê tóm tắt]:\n${statsText}\n\n` : ''}[Logs hệ thống (đã lọc các sự kiện quan trọng)]:\n${logsText}
 ---`
 
     try {
