@@ -1,4 +1,4 @@
-FROM node:16.4.2-alpine
+FROM node:18-alpine
 
 RUN apk add --no-cache git && \
   rm -rf /var/lib/apt/lists/* /var/cache/apk /usr/share/man /tmp/*
